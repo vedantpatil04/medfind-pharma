@@ -41,7 +41,7 @@
     </div>
     <aside class="heroAside">
       <div class="asideHeader"><span>WHY MEDFIND</span><i></i></div>
-      <div class="asideItem"><strong>Stock freshness</strong><p>Know how recently the pharmacy confirmed availability.</p></div>
+      <div class="asideItem"><strong>Stock freshness</strong><p>Know how recently the pharmacy confirmed availability — our main differentiator.</p></div>
       <div class="asideItem"><strong>Reserve before you go</strong><p>Reduce the risk of arriving after the medicine is sold.</p></div>
       <div class="asideMini"><span>Simple flow</span><b>Search → Verify → Reserve → Pick up</b></div>
     </aside>
@@ -53,17 +53,21 @@
       <div class="resultTools"><button class="filter active">Closest</button><button class="filter">Freshest stock</button></div>
     </div>
     <div class="context" id="context">Search a medicine to see nearby stock.</div>
+    <div class="freshLegend"><span><i class="freshDot fresh-good"></i>Fresh</span><span><i class="freshDot fresh-warn"></i>Older update</span><span><i class="freshDot fresh-bad"></i>Unavailable</span></div>
     <div id="results" class="results"></div>
   </section>
 
   <section class="lowerGrid">
     <div class="panel">
-      <div class="panelHead"><div><span class="eyebrow">MULTI-MEDICINE SEARCH</span><h2>One trip can cover more</h2></div></div>
-      <p class="bodyText">Need more than one medicine? MedFind can highlight a pharmacy that has multiple items in one visit.</p>
-      <div class="miniSearch">
-        <span>2 medicines selected</span><b>Find one pharmacy</b>
+      <div class="panelHead"><div><span class="eyebrow">MULTI-MEDICINE SEARCH</span><h2>Need multiple medicines?</h2></div></div>
+      <p class="bodyText">Select what you need this trip. MedFind highlights a nearby pharmacy that can cover all of it in one visit — a convenience, not a medical recommendation.</p>
+      <div class="medChips" id="medChips">
+        <button class="medChip" data-med="Paracetamol 500 mg">Paracetamol 500 mg</button>
+        <button class="medChip" data-med="Azithromycin 500 mg">Azithromycin 500 mg</button>
+        <button class="medChip" data-med="Cetirizine 10 mg">Cetirizine 10 mg</button>
       </div>
-      <button class="textBtn" id="multiBtn">Preview combined search →</button>
+      <button class="secondaryBtn wide" id="multiBtn">Find one pharmacy</button>
+      <div id="multiResult" class="multiResult"></div>
     </div>
     <div class="panel">
       <div class="panelHead"><div><span class="eyebrow">SAFETY</span><h2>Availability, not diagnosis</h2></div></div>
@@ -76,12 +80,26 @@
 <section id="savedView" class="screen">
   <div class="pageTitle"><span class="eyebrow">YOUR ACTIVITY</span><h1>Reservations</h1><p>Keep track of medicines you have reserved for pickup.</p></div>
   <div class="reservationHero">
-    <div class="reserveCode"><span>ACTIVE RESERVATION</span><strong id="reserveId">No active reservation</strong></div>
+    <div class="reserveCode"><span>ACTIVE RESERVATION</span><strong id="reserveIdBig">No active reservation</strong></div>
     <div id="reserveStatus" class="statusGhost">—</div>
   </div>
-  <div id="reservationDetail" class="reservationDetail emptyState">
+  <div id="reservationEmpty" class="reservationDetail emptyState">
     <strong>No active reservation yet.</strong>
     <span>Search for a medicine and reserve it from a nearby pharmacy.</span>
+  </div>
+  <div id="reservationCard" class="reservationCard hidden">
+    <div class="confirmBanner">
+      <span class="confirmMark">✓</span>
+      <div><b>Reservation confirmed</b><span>Show this ID at pickup</span></div>
+    </div>
+    <div class="reservationDetail">
+      <div class="detailRow"><b id="rMedicine"></b><span id="rQty"></span></div>
+      <div class="detailRow"><b id="rPharmacy"></b><span id="rDistance"></span></div>
+      <div class="detailRow"><b>Held until</b><span id="rHeld"></span></div>
+      <div class="detailRow"><b>Show at pickup</b><span id="rIdRow"></span></div>
+    </div>
+    <div class="stepper" id="statusStepper"></div>
+    <button class="secondaryBtn wide" id="simulateBtn">Simulate next step →</button>
   </div>
 </section>
 
@@ -99,10 +117,12 @@
   <div class="pharmacyGrid">
     <div class="panel">
       <div class="panelHead"><div><span class="eyebrow">INVENTORY</span><h2>Current stock</h2></div><button class="secondaryBtn" id="refresh">Refresh</button></div>
+      <div class="invHead"><span>Medicine</span><span>Stock</span><span>Status</span><span></span></div>
       <div id="inventory"></div>
     </div>
     <div class="panel">
       <div class="panelHead"><div><span class="eyebrow">PICKUP QUEUE</span><h2>Reservation requests</h2></div></div>
+      <div class="reqHead"><span>Reservation</span><span>Status</span><span></span></div>
       <div id="requests"></div>
     </div>
   </div>
@@ -112,13 +132,29 @@
 <div id="modal" class="modal hidden">
   <div class="modalBox">
     <button id="close" class="close">×</button>
-    <span class="eyebrow">RESERVE FOR PICKUP</span>
-    <h2 id="mTitle">Medicine</h2>
-    <p id="mPharmacy" class="muted"></p>
-    <label>Quantity</label>
-    <div class="qty"><button id="minus">−</button><input id="qty" type="number" min="1" max="5" value="1"><button id="plus">+</button></div>
-    <div class="holdBox"><div><span>Hold period</span><b>30 minutes</b></div><div><span>Pickup</span><b>In-store</b></div></div>
-    <button id="confirm" class="primaryBtn wide">Confirm reservation</button>
+    <div id="modalForm">
+      <span class="eyebrow">RESERVE FOR PICKUP</span>
+      <h2 id="mTitle">Medicine</h2>
+      <div class="holdBox">
+        <div><span>Pharmacy</span><b id="mPharmacyName"></b></div>
+        <div><span>Distance</span><b id="mDistance"></b></div>
+        <div><span>Available</span><b id="mAvailable"></b></div>
+        <div><span>Reservation period</span><b>30 minutes</b></div>
+      </div>
+      <label>Quantity</label>
+      <div class="qty"><button id="minus">−</button><input id="qty" type="number" min="1" max="5" value="1"><button id="plus">+</button></div>
+      <button id="confirm" class="primaryBtn wide">Confirm reservation</button>
+    </div>
+    <div id="modalConfirm" class="modalConfirm hidden">
+      <div class="confirmMarkBig">✓</div>
+      <h2>Reservation confirmed</h2>
+      <div class="confirmIdBig" id="confirmIdBig">MF4821</div>
+      <p class="confirmMed" id="confirmMed"></p>
+      <p class="confirmPharmacy" id="confirmPharmacy"></p>
+      <p class="confirmHeld" id="confirmHeld"></p>
+      <p class="confirmNote">Show this ID at pickup</p>
+      <button id="viewReservation" class="primaryBtn wide">View reservation</button>
+    </div>
   </div>
 </div>
 
