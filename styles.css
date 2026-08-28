@@ -3,6 +3,7 @@
 body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:var(--bg)}
 button,input{font:inherit}
 button{cursor:pointer}
+a{color:inherit;text-decoration:none}
 .hidden{display:none}
 .wide{width:100%}
 .topbar{height:72px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:24px;padding:0 4.5vw;position:sticky;top:0;z-index:20}
@@ -20,3 +21,58 @@ main{max-width:1240px;margin:0 auto;padding:42px 26px 75px}.screen{display:none}
 .toast{position:fixed;right:18px;bottom:18px;background:var(--ink);color:#fff;padding:12px 14px;border-radius:10px;font-size:12px;opacity:0;transform:translateY(8px);transition:.2s;z-index:80}.toast.show{opacity:1;transform:none}
 @media(max-width:950px){.hero,.pharmacyGrid,.lowerGrid,.results{grid-template-columns:1fr}h1{font-size:42px}.metrics{grid-template-columns:1fr 1fr}.topbar{flex-wrap:wrap;height:auto;padding:12px 4.5vw;row-gap:10px}.nav{order:3;flex-basis:100%;justify-content:space-between;gap:6px}.navBtn{flex:1;text-align:center;padding:9px 6px}.topRight{order:2;margin-left:auto}.brand{min-width:0}}
 @media(max-width:620px){.topbar{padding:10px 15px}.demo{display:none}.brand small{display:none}.topRight{margin-left:auto}.location{font-size:11px;padding:8px}main{padding:26px 15px 60px}.searchBar{height:auto;gap:7px;padding:7px}.searchBar button{height:40px}.searchBar input{padding:10px}.details{grid-template-columns:1fr}.pageTitleRow,.sectionHead,.reservationHero{align-items:start;flex-direction:column}.metrics{grid-template-columns:1fr 1fr}.resultTools{display:none}.freshLegend{flex-wrap:wrap;gap:10px}.navBtn{font-size:11px;padding:8px 4px}.matchCard{flex-direction:column}.matchList{text-align:left}}
+/* ===================== Phase 1 additions: auth, nav links, detail, profile, settings ===================== */
+
+/* fixes for classes now also applied to <a> tags outside flex containers */
+.pharmacyName{display:block}
+.backLink{display:inline-block;color:var(--muted);font-size:12px;margin-bottom:14px}
+.backLink:hover{color:var(--ink)}
+
+/* Auth / Login */
+.authWrap{display:grid;grid-template-columns:1.1fr .9fr;max-width:920px;margin:32px auto;background:#fff;border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:var(--shadow)}
+.authCard{padding:42px 38px}
+.authBrand{display:flex;align-items:center;gap:10px;margin-bottom:26px}
+.authBrand b{font-size:16px}
+.authTitle{font-size:28px;letter-spacing:-.03em;margin:0 0 6px}
+.authSub{color:var(--muted);font-size:13px;margin:0 0 22px}
+.roleTabs{display:flex;gap:6px;background:#f1f5f6;border-radius:10px;padding:4px;margin-bottom:18px}
+.roleTab{flex:1;border:0;background:transparent;padding:9px;border-radius:8px;font-size:12px;font-weight:700;color:var(--muted)}
+.roleTab.active{background:#fff;color:var(--ink);box-shadow:0 2px 6px rgba(31,53,67,.1)}
+.authCard label{display:block;font-size:11px;font-weight:800;margin:16px 0 6px}
+.authCard input{width:100%;height:44px;border:1px solid #d5dde2;border-radius:10px;padding:0 13px;font-size:13px}
+#loginBtn{margin-top:22px}
+.authNote{font-size:11px;color:var(--muted);margin-top:14px;text-align:center}
+.authAside{background:var(--navy);color:#fff;padding:38px 32px;display:flex;flex-direction:column;justify-content:center}
+@media(max-width:800px){.authWrap{grid-template-columns:1fr;margin:16px auto}.authAside{display:none}.authCard{padding:30px 22px}}
+@media(max-width:620px){.authTitle{font-size:24px}}
+
+/* Pharmacy detail */
+.verifiedBadge{display:inline-flex;align-items:center;gap:3px;background:var(--greenSoft);color:var(--green);font-size:11px;font-weight:800;border-radius:999px;padding:4px 9px;margin-left:8px;vertical-align:middle}
+.closedPill{background:var(--redSoft);color:var(--red)}
+
+/* Profile */
+.formPanel label{display:block;font-size:11px;font-weight:800;margin:16px 0 6px}
+.formPanel input{width:100%;height:44px;border:1px solid #d5dde2;border-radius:10px;padding:0 13px;font-size:13px;font:inherit}
+.profilePanel{max-width:520px}
+.avatarRow{display:flex;align-items:center;gap:14px;margin-bottom:6px;padding-bottom:20px;border-bottom:1px solid var(--line)}
+.avatarBig{width:56px;height:56px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:800;font-size:17px;flex-shrink:0}
+.avatarRow b{display:block;font-size:15px}
+.avatarRow .sub{font-size:12px;color:var(--muted)}
+#saveProfile{margin-top:22px}
+
+/* Settings */
+.stack{display:flex;flex-direction:column;gap:15px;margin-bottom:15px}
+.settingRow{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:14px 0;border-top:1px solid var(--line)}
+.settingRow:first-child{border-top:0}
+.settingRow b{display:block;font-size:13px}
+.settingRow .sub{font-size:11px;color:var(--muted);margin-top:2px}
+.toggle{position:relative;display:inline-block;width:42px;height:24px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggleTrack{position:absolute;inset:0;background:#d5dde2;border-radius:999px;transition:.2s;cursor:pointer}
+.toggleTrack::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle input:checked+.toggleTrack{background:var(--green)}
+.toggle input:checked+.toggleTrack::before{transform:translateX(18px)}
+#settingsLogoutBtn{margin-top:2px}
+
+/* Accessibility: respect reduced motion preference */
+@media(prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;animation-duration:.01ms!important}}

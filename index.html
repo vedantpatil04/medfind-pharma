@@ -12,16 +12,41 @@
     <div class="mark">M</div>
     <div><b>MedFind</b><small>Know it's available.</small></div>
   </div>
-  <nav class="nav">
-    <button class="navBtn active" data-screen="userView">Find medicine</button>
-    <button class="navBtn" data-screen="savedView">Reservations</button>
-    <button class="navBtn" data-screen="pharmacyView">Pharmacy</button>
-  </nav>
-  <div class="topRight"><span class="demo">Prototype</span><button id="locationBtn" class="location">📍 Bengaluru</button></div>
+  <nav class="nav" id="primaryNav"></nav>
+  <div class="topRight" id="topRight"></div>
 </header>
 
 <main>
-<section id="userView" class="screen active">
+
+<!-- ===================== LOGIN (public) ===================== -->
+<section id="loginView" class="screen active">
+  <div class="authWrap">
+    <div class="authCard">
+      <div class="authBrand"><div class="mark">M</div><b>MedFind</b></div>
+      <h1 class="authTitle">Log in</h1>
+      <p class="authSub">Know it's available. Reserve it. Pick it up.</p>
+      <div class="roleTabs" id="roleTabs">
+        <button class="roleTab active" data-role="user">User</button>
+        <button class="roleTab" data-role="pharmacy">Pharmacy</button>
+      </div>
+      <label>Email</label>
+      <input id="loginEmail" type="email" placeholder="you@example.com" autocomplete="email">
+      <label>Password</label>
+      <input id="loginPassword" type="password" placeholder="••••••••" autocomplete="current-password">
+      <button id="loginBtn" class="primaryBtn wide">Log in</button>
+      <p class="authNote">Prototype demo — any email and password will work.</p>
+    </div>
+    <aside class="authAside">
+      <div class="asideHeader"><span>WHY MEDFIND</span><i></i></div>
+      <div class="asideItem"><strong>Stock freshness</strong><p>Know how recently the pharmacy confirmed availability — our main differentiator.</p></div>
+      <div class="asideItem"><strong>Reserve before you go</strong><p>Reduce the risk of arriving after the medicine is sold.</p></div>
+      <div class="asideMini"><span>Simple flow</span><b>Search → Verify → Reserve → Pick up</b></div>
+    </aside>
+  </div>
+</section>
+
+<!-- ===================== USER: FIND MEDICINE (/user, /user/search) ===================== -->
+<section id="userView" class="screen">
   <div class="hero">
     <div class="heroCopy">
       <span class="eyebrow">MEDICINE AVAILABILITY</span>
@@ -50,10 +75,14 @@
   <section class="resultsSection">
     <div class="sectionHead">
       <div><span class="eyebrow">NEARBY RESULTS</span><h2 id="resultsTitle">Pharmacies near you</h2></div>
-      <div class="resultTools"><button class="filter active">Closest</button><button class="filter">Freshest stock</button></div>
+      <div class="resultTools">
+        <button class="filter active" data-sort="closest">Closest</button>
+        <button class="filter" data-sort="freshest">Freshest stock</button>
+        <button class="filter" data-sort="price">Lowest price</button>
+      </div>
     </div>
     <div class="context" id="context">Search a medicine to see nearby stock.</div>
-    <div class="freshLegend"><span><i class="freshDot fresh-good"></i>Fresh</span><span><i class="freshDot fresh-warn"></i>Older update</span><span><i class="freshDot fresh-bad"></i>Unavailable</span></div>
+    <div class="freshLegend"><span><i class="freshDot fresh-good"></i>Fresh / Recent</span><span><i class="freshDot fresh-warn"></i>Needs confirmation</span><span><i class="freshDot fresh-bad"></i>Unavailable</span></div>
     <div id="results" class="results"></div>
   </section>
 
@@ -77,6 +106,14 @@
   </section>
 </section>
 
+<!-- ===================== USER: PHARMACY DETAIL (/user/pharmacies/:id) ===================== -->
+<section id="pharmacyDetailView" class="screen">
+  <a href="/user" data-link class="backLink">← Back to results</a>
+  <div id="detailHead"></div>
+  <div id="detailBody"></div>
+</section>
+
+<!-- ===================== USER: RESERVATIONS (/user/reservations) ===================== -->
 <section id="savedView" class="screen">
   <div class="pageTitle"><span class="eyebrow">YOUR ACTIVITY</span><h1>Reservations</h1><p>Keep track of medicines you have reserved for pickup.</p></div>
   <div class="reservationHero">
@@ -103,16 +140,83 @@
   </div>
 </section>
 
+<!-- ===================== USER: PROFILE (/user/profile) ===================== -->
+<section id="profileView" class="screen">
+  <div class="pageTitleRow">
+    <div class="pageTitle"><span class="eyebrow">ACCOUNT</span><h1>Profile</h1><p>Manage your personal details.</p></div>
+    <a href="/user/settings" data-link class="secondaryBtn">Settings</a>
+  </div>
+  <div class="panel formPanel profilePanel">
+    <div class="avatarRow">
+      <div class="avatarBig" id="avatarInitials">D</div>
+      <div><b id="profileNameDisplay"></b><span class="sub" id="profileEmailDisplay"></span></div>
+    </div>
+    <label>Full name</label>
+    <input id="pName" type="text">
+    <label>Email</label>
+    <input id="pEmail" type="email">
+    <label>Mobile number</label>
+    <input id="pMobile" type="tel">
+    <label>Saved location</label>
+    <input id="pLocation" type="text">
+    <button id="saveProfile" class="primaryBtn wide">Save changes</button>
+  </div>
+</section>
+
+<!-- ===================== USER: SETTINGS (/user/settings) ===================== -->
+<section id="settingsView" class="screen">
+  <a href="/user/profile" data-link class="backLink">← Back to profile</a>
+  <div class="pageTitle"><span class="eyebrow">ACCOUNT</span><h1>Settings</h1><p>Control how MedFind works for you.</p></div>
+
+  <div class="stack">
+    <div class="panel">
+      <div class="panelHead"><div><span class="eyebrow">NOTIFICATIONS</span><h2>Alerts</h2></div></div>
+      <div class="settingRow">
+        <div><b>Notifications</b><span class="sub">General updates from MedFind</span></div>
+        <label class="toggle"><input type="checkbox" id="toggleNotif" checked><span class="toggleTrack"></span></label>
+      </div>
+      <div class="settingRow">
+        <div><b>Reservation notifications</b><span class="sub">Pickup and status updates</span></div>
+        <label class="toggle"><input type="checkbox" id="toggleReserveNotif" checked><span class="toggleTrack"></span></label>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panelHead"><div><span class="eyebrow">LOCATION &amp; PRIVACY</span><h2>Preferences</h2></div></div>
+      <div class="settingRow">
+        <div><b>Location preferences</b><span class="sub">Used to find nearby pharmacies</span></div>
+        <label class="toggle"><input type="checkbox" id="toggleLocation" checked><span class="toggleTrack"></span></label>
+      </div>
+      <div class="settingRow">
+        <div><b>Privacy</b><span class="sub">Control what MedFind shares with pharmacies</span></div>
+        <button class="secondaryBtn" id="privacyBtn">Manage</button>
+      </div>
+    </div>
+
+    <div class="panel formPanel">
+      <div class="panelHead"><div><span class="eyebrow">SECURITY</span><h2>Change password</h2></div></div>
+      <label>Current password</label>
+      <input type="password" id="curPass">
+      <label>New password</label>
+      <input type="password" id="newPass">
+      <button class="secondaryBtn wide" id="updatePassBtn">Update password</button>
+    </div>
+  </div>
+
+  <button class="primaryBtn wide" id="settingsLogoutBtn">Log out</button>
+</section>
+
+<!-- ===================== PHARMACY PORTAL (/pharmacy) ===================== -->
 <section id="pharmacyView" class="screen">
   <div class="pageTitleRow">
-    <div class="pageTitle"><span class="eyebrow">PHARMACY PORTAL</span><h1>CityCare Pharmacy</h1><p>Keep stock current and confirm pickup requests.</p></div>
+    <div class="pageTitle"><span class="eyebrow">PHARMACY PORTAL</span><h1 id="pharmacyNameHeader">CityCare Pharmacy</h1><p>Keep stock current and confirm pickup requests.</p></div>
     <span class="openPill">● Open until 10:30 PM</span>
   </div>
   <div class="metrics">
-    <div><span>Listed medicines</span><b id="listed">6</b><small>in inventory</small></div>
-    <div><span>Low stock</span><b id="low">2</b><small>need attention</small></div>
-    <div><span>Pending reservations</span><b id="pending">1</b><small>awaiting action</small></div>
-    <div><span>Last inventory sync</span><b>4 min</b><small>ago</small></div>
+    <div class="metric"><span>Listed medicines</span><b id="listed">6</b><small>in inventory</small></div>
+    <div class="metric"><span>Low stock</span><b id="low">2</b><small>need attention</small></div>
+    <div class="metric"><span>Pending reservations</span><b id="pending">1</b><small>awaiting action</small></div>
+    <div class="metric"><span>Last inventory sync</span><b>4 min</b><small>ago</small></div>
   </div>
   <div class="pharmacyGrid">
     <div class="panel">
@@ -127,6 +231,7 @@
     </div>
   </div>
 </section>
+
 </main>
 
 <div id="modal" class="modal hidden">
